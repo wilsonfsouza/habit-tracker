@@ -34,3 +34,13 @@ model Day {
   @@unique([date])
   @@map("days")
 }
+
+model DailyHabit {
+  id String @id @default(uuid())
+
+  day_id   String
+  habit_id String
+
+  @@unique([day_id, habit_id])
+  @@map("daily_habits")
+}
