@@ -1,10 +1,13 @@
+import { generateDatesFromBeginningOfYear } from "../utils/generate-dates-from-beginning-year"
 import { HabitDay } from "./HabitDay"
 
 const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
+const summaryDates = generateDatesFromBeginningOfYear()
+
 export function SummaryTable() {
   return (
-    <div className="w-full flex">
+    <div className="w-full flex gap-3">
       <div className="grid grid-rows-7 grid-flow-row gap-3">
         {WEEK_DAYS.map(weekDay => (
           <div
@@ -17,16 +20,9 @@ export function SummaryTable() {
       </div>
 
       <div className="grid grid-rows-7 grid-flow-col gap-3">
-        <HabitDay />
-        <HabitDay />
-        <HabitDay />
-        <HabitDay />
-        <HabitDay />
-        <HabitDay />
-        <HabitDay />
-        <HabitDay />
-        <HabitDay />
-        <HabitDay />
+        {summaryDates.map(date => {
+          return <HabitDay key={date.toString()} />
+        })}
       </div>
     </div>
   )
