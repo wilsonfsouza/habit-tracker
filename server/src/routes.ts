@@ -75,5 +75,56 @@ export async function appRoutes(app: FastifyInstance) {
       completedHabits
     }
   })
+
+  app.patch('/habits/:id/toggle', async (request) => {
+    const toggleHabitParams = z.object({
+      id: z.string().uuid()
+    })
+
+    const { id } = toggleHabitParams.parse(request.params)
+
+    const today = dayjs().startOf('day').toDate() 
+
+    let day = await prisma.day.findUnique({
+      where: {
+        date: today
+      }
+    })
+
+    if (!day) {
+      day = await prisma.day.create({
+        data: {
+          date: today
+        }
+      })
+    }
+
+    // Find if user already has the habit completed in that day
+    const dailyHabit = await prisma.dailyHabit.findUnique({
+      where: {
+        day_id_habit_id: {
+          day_id: day.id,
+          habit_id: id
+        }
+      }
+    })
+
+    if (dailyHabit) {
+      // Remove checking habit as completed
+      await prisma.dailyHabit.delete({
+        where: {
+          id: dailyHabit.id
+        }
+      })
+    } else {
+      // Complete a habit in that day
+      await prisma.dailyHabit.create({
+        data: {
+          day_id: day.id,
+          habit_id: id
+        }
+      })
+    }
+  })
 }
 
